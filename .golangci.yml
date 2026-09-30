@@ -1,0 +1,147 @@
+# Copyright (c) 2026 xiayu
+# Contact: 126240622+xiayu1987@users.noreply.github.com
+# SPDX-License-Identifier: MIT
+
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  default: none
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - ineffassign
+    - unused
+    - misspell
+    - gocyclo
+    - gocognit
+    - funlen
+    - nestif
+    - bodyclose
+    - gosec
+  settings:
+    gocyclo:
+      min-complexity: 25
+    gocognit:
+      min-complexity: 40
+    funlen:
+      lines: 150
+      statements: 90
+      ignore-comments: true
+    nestif:
+      min-complexity: 8
+    misspell:
+      locale: US
+      ignore-rules:
+        - catalogue
+        - catalogues
+    errcheck:
+      exclude-functions:
+        - (*golang.org/x/sys/windows.LazyProc).Call
+        - golang.org/x/sys/windows.CloseHandle
+    gosec:
+      excludes:
+        - G104
+        - G304
+  exclusions:
+    generated: lax
+    paths:
+      - web/node_modules
+    presets:
+      - std-error-handling
+    rules:
+      - path: _test\.go
+        linters:
+          - funlen
+          - gocognit
+          - gocyclo
+          - nestif
+          - gosec
+          - errcheck
+      - path: cmd/noobloftd/
+        linters:
+          - gosec
+        text: "G703|G704"
+      - path: internal/config/recovery\.go
+        linters:
+          - gosec
+        text: "G703"
+      - path: internal/controlplane/gateway/management\.go
+        linters:
+          - gosec
+        text: "G124"
+      - path: cmd/noobloftd/tray_windows\.go
+        linters:
+          - gosec
+        text: "G103|G115"
+      - path: cmd/noobloftd/main\.go
+        linters:
+          - gocognit
+          - nestif
+        source: "^func buildRuntime|if cfg.Provider.Enabled"
+      - path: cmd/noobloftd/manage\.go
+        linters:
+          - gocognit
+          - gocyclo
+          - funlen
+        source: "^func cmdManage"
+      - path: cmd/noobloftd/publisher\.go
+        linters:
+          - gocognit
+          - gocyclo
+          - nestif
+          - funlen
+        source: "^func cmdPublisher|if op == "
+      - path: cmd/noobloftd/tray_windows\.go
+        linters:
+          - gocyclo
+        source: "^func wndProc"
+      - path: internal/config/config\.go
+        linters:
+          - gocognit
+          - gocyclo
+        source: "^func \\(c \\*Config\\) Validate"
+      - path: internal/controlplane/gateway/issuer\.go
+        linters:
+          - gocognit
+          - gocyclo
+          - nestif
+          - funlen
+        source: "^func \\(m \\*manager\\) issuer|if r.Method == "
+      - path: internal/controlplane/gateway/management\.go
+        linters:
+          - gocognit
+          - nestif
+        source: "^func \\(m \\*manager\\) publisher|if req.Operation == "
+      - path: internal/controlplane/gateway/authorization\.go
+        linters:
+          - gocyclo
+          - nestif
+        source: "^func \\(m \\*manager\\) authorization|if cfg.Provider.Service == nil"
+      - path: internal/network/node/node\.go
+        linters:
+          - gocognit
+          - gocyclo
+          - funlen
+        source: "^func New"
+      - path: internal/security/publisher/publisher\.go
+        linters:
+          - gocyclo
+        source: "^func \\(d \\*Document\\) Verify"
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/xiayu1987/noobloft
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
